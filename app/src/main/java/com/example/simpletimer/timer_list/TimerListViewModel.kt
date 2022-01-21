@@ -18,20 +18,32 @@ class TimerListViewModel @Inject constructor(
 //    private val repository: TimerRepository
 
 ): ViewModel() {
-    val timers = listOf{
-        Timer(
+    var timers = ArrayList<Timer>()
+
+
+    init {
+        val timer1 =  Timer(
             label = "timer1",
             originalTime = 20,
             currentTime = 20,
             isTimerRunning = false
         )
-        Timer(
+        val timer2 = Timer(
             label = "timer1",
             originalTime = 20,
             currentTime = 20,
             isTimerRunning = false
         )
+        timers.add(timer1)
+        timers.add(timer2)
     }
+
+
+
+
+
+
+
 
     private val _uiEvent =  Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -42,15 +54,7 @@ class TimerListViewModel @Inject constructor(
             is TimerListEvent.OnAddTimerClick -> {
                 sendUiEvent(UiEvent.Navigate(Routes.TIMER_ADD))
             }
-
-
-
-
         }
-
-
-
-
     }
 
 

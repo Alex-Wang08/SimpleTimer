@@ -31,6 +31,7 @@ fun TimerAddScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val timeShow = viewModel.time.observeAsState(initial = "00:00:00")
+    var length = timeShow.value.length
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -84,7 +85,7 @@ fun TimerAddScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextField(
-                value = TextFieldValue(text = timeShow.value, selection = TextRange(8, 8)), // keep cursor at the end
+                value = TextFieldValue(text = timeShow.value, selection = TextRange(length, length)), // keep cursor at the end
                 onValueChange = {
                     viewModel.onEvent(TimerAddEvent.OnTimeChange(it.text))
                 },
