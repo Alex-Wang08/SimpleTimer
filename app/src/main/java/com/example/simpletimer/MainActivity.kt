@@ -8,31 +8,36 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.simpletimer.timer_add.TimerAddScreen
+import com.example.simpletimer.timer_list.TimerListScreen
 import com.example.simpletimer.ui.theme.SimpleTimerTheme
+import com.example.simpletimer.util.Routes
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SimpleTimerTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Routes.TIMER_LIST
+                ) {
+                    composable(Routes.TIMER_LIST) {
+                        TimerListScreen(onNavigate = { navController.navigate(it.route) })
+                    }
+
+                    composable(Routes.TIMER_ADD) {
+                        TimerAddScreen(onPopBackStack = { navController.popBackStack() })
+                    }
+
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    SimpleTimerTheme {
-        Greeting("Android")
     }
 }
