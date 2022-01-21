@@ -8,6 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,6 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.window.statusBarColor = ContextCompat.getColor(this,R.color.blue)
+
         setContent {
             SimpleTimerTheme {
                 val navController = rememberNavController()
@@ -35,7 +38,6 @@ class MainActivity : ComponentActivity() {
                     composable(Routes.TIMER_ADD) {
                         TimerAddScreen(onPopBackStack = { navController.popBackStack() })
                     }
-
                 }
             }
         }

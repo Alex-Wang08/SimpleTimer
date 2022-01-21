@@ -1,10 +1,5 @@
 package com.example.simpletimer.timer_list
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -43,7 +38,6 @@ fun TimerListScreen(
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    tint = Color.Blue,
                     contentDescription = "Add"
                 )
             }
