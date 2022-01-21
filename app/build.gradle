@@ -68,6 +68,7 @@ dependencies {
     // Compose dependencies
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
     implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
+    implementation "androidx.compose.runtime:runtime-livedata:1.2.0-alpha01"
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
