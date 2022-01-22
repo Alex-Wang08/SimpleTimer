@@ -34,8 +34,23 @@ class TimerListViewModel @Inject constructor(
             currentTime = 20,
             isTimerRunning = false
         )
+        val timer3 =  Timer(
+            label = "timer1",
+            originalTime = 20,
+            currentTime = 20,
+            isTimerRunning = false
+        )
+        val timer4 = Timer(
+            label = "timer1",
+            originalTime = 20,
+            currentTime = 20,
+            isTimerRunning = false
+        )
         timers.add(timer1)
         timers.add(timer2)
+        timers.add(timer3)
+        timers.add(timer4)
+
     }
 
 

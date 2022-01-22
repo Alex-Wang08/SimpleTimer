@@ -31,7 +31,7 @@ fun TimerAddScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val timeShow = viewModel.time.observeAsState(initial = "00:00:00")
-    var length = timeShow.value.length
+    val length = timeShow.value.length
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -68,8 +68,6 @@ fun TimerAddScreen(
                 }
             )
         }
-
-
     ) {
 
         Column(
