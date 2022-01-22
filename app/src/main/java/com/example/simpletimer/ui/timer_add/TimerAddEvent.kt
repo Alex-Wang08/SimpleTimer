@@ -1,4 +1,4 @@
-package com.example.simpletimer.timer_add
+package com.example.simpletimer.ui.timer_add
 
 sealed class TimerAddEvent {
     object OnCancelClick: TimerAddEvent()

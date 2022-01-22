@@ -1,17 +1,19 @@
-package com.example.simpletimer.timer_list
+package com.example.simpletimer.ui.timer_list
 
+import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simpletimer.data.Timer
-import com.example.simpletimer.data.TimerRepository
+import com.example.simpletimer.extension.TimerConstants.COUNT_DOWN_IN_MSEC
+import com.example.simpletimer.extension.TimerConstants.MSECS_IN_SEC
+import com.example.simpletimer.extension.toMillisecond
+import com.example.simpletimer.extension.toTimerLong
+import com.example.simpletimer.extension.toTimerString
 import com.example.simpletimer.util.Routes
 import com.example.simpletimer.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +22,12 @@ import javax.inject.Inject
 class TimerListViewModel @Inject constructor(
 //    private val repository: TimerRepository
 
-): ViewModel() {
+) : ViewModel() {
+
+
+    private var countDownTimer: CountDownTimer? = null
+
+
     private val _timers = ArrayList<Timer>()
     val timersLiveData = mutableStateListOf<Timer>()
 
@@ -28,9 +35,9 @@ class TimerListViewModel @Inject constructor(
         val timer1 = Timer(
             id = "timer1",
             label = "timer1",
-            originalTime = 20,
-            currentTime = 20,
-            isTimerRunning = true
+            originalTime = "00:20:21",
+            currentTime = "00:10:10",
+            isTimerRunning = false
         )
 //        val timer2 = Timer(
 //            id = "timer2",
@@ -61,13 +68,7 @@ class TimerListViewModel @Inject constructor(
     }
 
 
-
-
-
-
-
-
-    private val _uiEvent =  Channel<UiEvent>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
 
@@ -81,34 +82,46 @@ class TimerListViewModel @Inject constructor(
             }
             is TimerListEvent.OnTimerStateChange -> {
                 changeTimerState(event.timer, event.index)
-
             }
         }
     }
 
     private fun changeTimerState(timer: Timer, index: Int) {
-        val isTimerRunning = timer.isTimerRunning
-        timersLiveData[index] = timersLiveData[index].copy(isTimerRunning = !isTimerRunning)
+        val isTimerRunning = !timer.isTimerRunning
+        timersLiveData[index] = timersLiveData[index].copy(isTimerRunning = isTimerRunning)
 
         if (isTimerRunning) {
-            cancelCountDown()
+            startCountDown(timer, index)
         } else {
-            startCountDown()
+            cancelCountDown(timer)
         }
     }
 
+    private fun startCountDown(timer: Timer, index: Int) {
+        val totalTime = timer.currentTime.toTimerLong().toMillisecond()
 
-    private fun startCountDown() {
+        countDownTimer = object : CountDownTimer(totalTime, COUNT_DOWN_IN_MSEC) {
+
+            override fun onTick(milliSecs: Long) {
+                updateCurrentTime(milliSecs, index)
+            }
+
+            override fun onFinish() {
+                TODO("Not yet implemented")
+            }
+        }
+        countDownTimer?.start()
 
     }
 
-
-    private fun cancelCountDown() {
-
+    private fun updateCurrentTime(milliSecs: Long, index: Int) {
+        val timeString = (milliSecs / MSECS_IN_SEC).toTimerString()
+        timersLiveData[index] = timersLiveData[index].copy(currentTime = timeString)
     }
 
+    private fun cancelCountDown(timer: Timer) {
 
-
+    }
 
 
     private fun deleteTimer(timer: Timer, index: Int) {

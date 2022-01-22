@@ -1,9 +1,12 @@
-package com.example.simpletimer.timer_add
+package com.example.simpletimer.ui.timer_add
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.simpletimer.extension.TimerConstants
+import com.example.simpletimer.extension.toTimerLong
+import com.example.simpletimer.extension.toTimerString
 import com.example.simpletimer.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -14,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TimerAddViewModel @Inject constructor() : ViewModel() {
 
-    private val _time = MutableLiveData("00:00:00")
+    private val _time = MutableLiveData(TimerConstants.DEFAULT_TIME)
     val time: LiveData<String>
         get() = _time
 
@@ -26,8 +29,6 @@ class TimerAddViewModel @Inject constructor() : ViewModel() {
         when (event) {
             is TimerAddEvent.OnTimeChange -> {
                 updateTimerValue(event.time)
-
-
             }
 
             is TimerAddEvent.OnCancelClick -> {
@@ -50,35 +51,10 @@ class TimerAddViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun updateTimerValue(value: String?) {
-        value?.let {
-            // timer string in format of 12:23:56
-            val timeInt = convertTimeStringToInt(it)
-            if (timeInt > 999999) return
+        if (value == null) return
 
-            val timeString = try {
-                convertTimeIntToString(timeInt)
-            } catch (e: Exception) {
-                return
-            }
-
-            _time.postValue(timeString)
-        }
-
-    }
-
-    private fun convertTimeStringToInt(time: String): Int {
-        return time.replace("""[^0-9]""".toRegex(), "").toInt()
-    }
-
-    private fun convertTimeIntToString(time: Int = 0): String {
-        var timeInt = time
-        val seconds = timeInt % 100
-        timeInt /= 100
-
-        val minutes = timeInt % 100
-        timeInt /= 100
-
-        val hours = timeInt
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        // timer string in format of 12:23:56
+        val timeString = value.toTimerLong().toTimerString()
+        _time.postValue(timeString)
     }
 }

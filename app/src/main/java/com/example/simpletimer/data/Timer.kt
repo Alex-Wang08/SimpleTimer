@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Timer(
     val id: String,
     var label: String = "Timer",
-    var originalTime: Long,
-    var currentTime: Long,
+    var originalTime: String,
+    var currentTime: String,
     var isTimerRunning: Boolean = false
 )

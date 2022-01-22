@@ -1,4 +1,4 @@
-package com.example.simpletimer.timer_list.timer_item
+package com.example.simpletimer.ui.timer_list.timer_item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simpletimer.R
 import com.example.simpletimer.data.Timer
-import com.example.simpletimer.timer_list.TimerListEvent
+import com.example.simpletimer.ui.timer_list.TimerListEvent
 
 @Composable
 fun TimerItem(
@@ -58,7 +58,7 @@ fun TimerItem(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "00:00:00",
+                        text = timer.currentTime,
                         fontSize = 60.sp,
                     )
                     Spacer(modifier = Modifier.height(8.dp))

@@ -1,4 +1,4 @@
-package com.example.simpletimer.timer_list
+package com.example.simpletimer.ui.timer_list
 
 import com.example.simpletimer.data.Timer
 
