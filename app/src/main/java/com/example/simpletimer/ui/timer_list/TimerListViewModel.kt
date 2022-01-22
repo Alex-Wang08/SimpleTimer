@@ -1,10 +1,10 @@
 package com.example.simpletimer.ui.timer_list
 
 import android.os.CountDownTimer
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simpletimer.data.Timer
+import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.extension.*
 import com.example.simpletimer.util.Routes
 import com.example.simpletimer.util.UiEvent
@@ -16,52 +16,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimerListViewModel @Inject constructor(
-//    private val repository: TimerRepository
-
+    private val repository: TimerRepository
 ) : ViewModel() {
 
+    val timerList = repository.getTimerList()
+
     private var countDownTimer: CountDownTimer? = null
-//    private var countDownTimerList = ArrayList<CountDownTimer>()
-
-    private val _timers = ArrayList<Timer>()
-    val timersLiveData = mutableStateListOf<Timer>()
-
-    init {
-        val timer1 = Timer(
-            id = "timer1",
-            label = "timer1",
-            originalTime = "00:20:21",
-            currentTime = "00:10:10",
-            isTimerRunning = false
-        )
-//        val timer2 = Timer(
-//            id = "timer2",
-//            label = "timer2",
-//            originalTime = 20,
-//            currentTime = 20,
-//            isTimerRunning = false
-//        )
-//        val timer3 = Timer(
-//            id = "timer3",
-//            label = "timer3",
-//            originalTime = 20,
-//            currentTime = 20,
-//            isTimerRunning = true
-//        )
-//        val timer4 = Timer(
-//            id = "timer4",
-//            label = "timer4",
-//            originalTime = 20,
-//            currentTime = 20,
-//            isTimerRunning = false
-//        )
-        _timers.add(timer1)
-//        _timers.add(timer2)
-//        _timers.add(timer3)
-//        _timers.add(timer4)
-        timersLiveData.addAll(_timers)
-    }
-
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -81,13 +41,15 @@ class TimerListViewModel @Inject constructor(
     }
 
     private fun changeTimerState(timer: Timer, index: Int) {
-        val isTimerRunning = !timer.isTimerRunning
-        timersLiveData[index] = timersLiveData[index].copy(isTimerRunning = isTimerRunning)
+        viewModelScope.launch {
+            val isRunning = !timer.isRunning
+            repository.insertTimer(timer.copy(isRunning = isRunning))
 
-        if (isTimerRunning) {
-            startCountDown(timer, index)
-        } else {
-            cancelCountDown(timer)
+            if (isRunning) {
+                startCountDown(timer, index)
+            } else {
+                cancelCountDown(timer)
+            }
         }
     }
 
@@ -97,7 +59,7 @@ class TimerListViewModel @Inject constructor(
         countDownTimer = object : CountDownTimer(totalTimeInMilliseconds, 1000) {
 
             override fun onTick(milliSecs: Long) {
-                updateCurrentTime(milliSecs, index)
+                updateCurrentTime(milliSecs, timer)
             }
 
             override fun onFinish() {
@@ -107,9 +69,11 @@ class TimerListViewModel @Inject constructor(
         countDownTimer?.start()
     }
 
-    private fun updateCurrentTime(milliSecs: Long, index: Int) {
-        val timeString = milliSecs.fromMillisecondsToTimerString()
-        timersLiveData[index] = timersLiveData[index].copy(currentTime = timeString)
+    private fun updateCurrentTime(milliSecs: Long, timer: Timer) {
+        viewModelScope.launch {
+            val timeString = milliSecs.fromMillisecondsToTimerString()
+            repository.insertTimer(timer.copy(currentTime = timeString))
+        }
     }
 
     private fun cancelCountDown(timer: Timer) {
@@ -117,7 +81,9 @@ class TimerListViewModel @Inject constructor(
     }
 
     private fun deleteTimer(timer: Timer, index: Int) {
-        timersLiveData.removeAt(index)
+        viewModelScope.launch {
+            repository.deleteTimer(timer)
+        }
     }
 
     private fun sendUiEvent(event: UiEvent) {

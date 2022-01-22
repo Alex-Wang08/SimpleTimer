@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,8 +23,7 @@ fun TimerListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: TimerListViewModel = hiltViewModel()
 ) {
-    val timers = viewModel.timersLiveData
-
+    val timerList = viewModel.timerList.collectAsState(initial = emptyList())
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -60,12 +60,14 @@ fun TimerListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(timers) { index, timer  ->
+            itemsIndexed(timerList.value) { index, timer  ->
                 TimerItem(
                     index = index,
                     timer = timer,
                     onEvent = viewModel::onEvent,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 )
             }
         }
