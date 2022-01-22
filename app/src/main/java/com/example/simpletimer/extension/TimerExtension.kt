@@ -5,30 +5,43 @@ object TimerConstants {
     const val STRING_FORMAT = "%02d:%02d:%02d"
     const val REGEX_DIGIT = """[^0-9]"""
     const val DEFAULT_TIME = "00:00:00"
-
-    const val MINUTES_IN_HOUR = 60
-    const val SECS_IN_MINUTE = 60
-    const val MSECS_IN_SEC = 1000
-    const val COUNT_DOWN_IN_MSEC = 1000L
 }
 
-fun String?.toTimerLong(): Long {
-    return this?.replace(TimerConstants.REGEX_DIGIT.toRegex(), "")?.toLong()?.coerceAtMost(TimerConstants.MAX_VALUE) ?: 0
+// 10:01:01 -> 100101
+fun String?.fromTimerStringToTimerLong(): Long {
+    return this?.replace(TimerConstants.REGEX_DIGIT.toRegex(), "")?.toLong() ?: 0L
 }
 
+// 00:01:01 -> 61000
+fun String?.fromTimerStringToMilliseconds(): Long {
+    return this?.fromTimerStringToTimerLong()?.fromTimerLongToMillisecond() ?: 0L
+}
 
-// convert seconds to string 00:00:00
-fun Long.toTimerString(): String {
+// 101 -> 61000
+fun Long.fromTimerLongToMillisecond(): Long {
+    val (hours, minutes, seconds) = this.fromTimerLongToTimerValue()
+    return (((hours * 60 + minutes) * 60) + seconds) * 1000
+}
+
+// 61 -> string 00:01:01
+fun Long.fromSecondsToTimerString(): String {
     val (hours, minutes, seconds) = this.fromSecondsToTimerValue()
     return String.format(TimerConstants.STRING_FORMAT, hours, minutes, seconds)
 }
 
-fun Long.toMillisecond(): Long {
-    val (hours, minutes, seconds) = this.toTimerValue()
-    return (((hours * TimerConstants.MINUTES_IN_HOUR + minutes) * TimerConstants.SECS_IN_MINUTE) + seconds) * TimerConstants.MSECS_IN_SEC
+// 61000 -> 00:01:01
+fun Long.fromMillisecondsToTimerString(): String {
+    return (this / 1000).fromSecondsToTimerString()
 }
 
-private fun Long.toTimerValue(): Triple<Long, Long, Long> {
+// 101 -> 00:01:01
+fun Long.fromTimerLongToTimerString(): String {
+    val (hours, minutes, seconds) = this.fromTimerLongToTimerValue()
+    return String.format(TimerConstants.STRING_FORMAT, hours, minutes, seconds)
+}
+
+// 101 -> (0, 1, 1)
+private fun Long.fromTimerLongToTimerValue(): Triple<Long, Long, Long> {
     var timeInt = this
     val seconds = timeInt % 100
     timeInt /= 100
@@ -40,13 +53,14 @@ private fun Long.toTimerValue(): Triple<Long, Long, Long> {
     return Triple(hours, minutes, seconds)
 }
 
+// 61 -> (0, 1, 1)
 private fun Long.fromSecondsToTimerValue(): Triple<Long, Long, Long> {
     val totalSeconds = this
-    val seconds = totalSeconds % TimerConstants.SECS_IN_MINUTE
+    val seconds = totalSeconds % 60
 
-    val totalMinutes =  totalSeconds / TimerConstants.SECS_IN_MINUTE
-    val minutes = totalMinutes % TimerConstants.MINUTES_IN_HOUR
+    val totalMinutes =  totalSeconds / 60
+    val minutes = totalMinutes % 60
 
-    val hours = totalMinutes / TimerConstants.MINUTES_IN_HOUR
+    val hours = totalMinutes / 60
     return Triple(hours, minutes, seconds)
 }

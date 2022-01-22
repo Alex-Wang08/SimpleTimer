@@ -8,8 +8,11 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.simpletimer.ui.theme.Blue
 import com.example.simpletimer.util.UiEvent
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -31,7 +35,13 @@ fun TimerAddScreen(
     val timeShow = viewModel.time.observeAsState(initial = "00:00:00")
     val length = timeShow.value.length
 
+    val focusRequester = remember { FocusRequester() }
+
     LaunchedEffect(key1 = true) {
+        // auto pop up the keyboard
+        delay(300)
+        focusRequester.requestFocus()
+
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.PopBackStack -> onPopBackStack()
@@ -87,7 +97,9 @@ fun TimerAddScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(Alignment.CenterVertically),
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .focusRequester(focusRequester),
+
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center,
@@ -100,7 +112,7 @@ fun TimerAddScreen(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
                     cursorColor = Color.Transparent
-                ),
+                )
             )
         }
     }

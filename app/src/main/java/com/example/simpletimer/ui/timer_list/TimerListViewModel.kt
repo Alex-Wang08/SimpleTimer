@@ -5,11 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simpletimer.data.Timer
-import com.example.simpletimer.extension.TimerConstants.COUNT_DOWN_IN_MSEC
-import com.example.simpletimer.extension.TimerConstants.MSECS_IN_SEC
-import com.example.simpletimer.extension.toMillisecond
-import com.example.simpletimer.extension.toTimerLong
-import com.example.simpletimer.extension.toTimerString
+import com.example.simpletimer.extension.*
 import com.example.simpletimer.util.Routes
 import com.example.simpletimer.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,9 +20,8 @@ class TimerListViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-
     private var countDownTimer: CountDownTimer? = null
-
+//    private var countDownTimerList = ArrayList<CountDownTimer>()
 
     private val _timers = ArrayList<Timer>()
     val timersLiveData = mutableStateListOf<Timer>()
@@ -71,7 +66,6 @@ class TimerListViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-
     fun onEvent(event: TimerListEvent) {
         when (event) {
             is TimerListEvent.OnAddTimerClick -> {
@@ -98,9 +92,9 @@ class TimerListViewModel @Inject constructor(
     }
 
     private fun startCountDown(timer: Timer, index: Int) {
-        val totalTime = timer.currentTime.toTimerLong().toMillisecond()
+        val totalTimeInMilliseconds = timer.currentTime.fromTimerStringToMilliseconds()
 
-        countDownTimer = object : CountDownTimer(totalTime, COUNT_DOWN_IN_MSEC) {
+        countDownTimer = object : CountDownTimer(totalTimeInMilliseconds, 1000) {
 
             override fun onTick(milliSecs: Long) {
                 updateCurrentTime(milliSecs, index)
@@ -111,18 +105,16 @@ class TimerListViewModel @Inject constructor(
             }
         }
         countDownTimer?.start()
-
     }
 
     private fun updateCurrentTime(milliSecs: Long, index: Int) {
-        val timeString = (milliSecs / MSECS_IN_SEC).toTimerString()
+        val timeString = milliSecs.fromMillisecondsToTimerString()
         timersLiveData[index] = timersLiveData[index].copy(currentTime = timeString)
     }
 
     private fun cancelCountDown(timer: Timer) {
         countDownTimer?.cancel()
     }
-
 
     private fun deleteTimer(timer: Timer, index: Int) {
         timersLiveData.removeAt(index)
