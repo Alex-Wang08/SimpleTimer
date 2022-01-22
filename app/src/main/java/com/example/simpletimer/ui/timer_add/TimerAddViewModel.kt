@@ -54,11 +54,14 @@ class TimerAddViewModel @Inject constructor(
                 ))
                 return@launch
             }
+
+            // we may encounter minute or second is over 60: 01:70:91, recalculate it to normal value
+            val newTimeString = timeString.fromTimerStringToTimerLong().fromTimeLongToSeconds().fromSecondsToTimerString()
             repository.insertTimer(
                 Timer(
                     label = "Timer",
-                    originalTime = timeString,
-                    currentTime = timeString,
+                    originalTime = newTimeString,
+                    currentTime = newTimeString,
                     isRunning = true
                 )
             )

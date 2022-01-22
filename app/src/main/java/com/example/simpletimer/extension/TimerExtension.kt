@@ -17,10 +17,15 @@ fun String?.fromTimerStringToMilliseconds(): Long {
     return this?.fromTimerStringToTimerLong()?.fromTimerLongToMillisecond() ?: 0L
 }
 
+// 101 -> 61
+fun Long.fromTimeLongToSeconds(): Long {
+    val (hours, minutes, seconds) = this.fromTimerLongToTimerValue()
+    return ((hours * 60 + minutes) * 60) + seconds
+}
+
 // 101 -> 61000
 fun Long.fromTimerLongToMillisecond(): Long {
-    val (hours, minutes, seconds) = this.fromTimerLongToTimerValue()
-    return (((hours * 60 + minutes) * 60) + seconds) * 1000
+    return this.fromTimeLongToSeconds() * 1000
 }
 
 // 61 -> string 00:01:01
