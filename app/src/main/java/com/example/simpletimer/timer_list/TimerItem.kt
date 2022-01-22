@@ -1,23 +1,17 @@
 package com.example.simpletimer.timer_list
 
-import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simpletimer.R
@@ -26,6 +20,7 @@ import com.example.simpletimer.data.Timer
 @Composable
 fun TimerItem(
     timer: Timer,
+    index: Int,
     onEvent: (TimerListEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -48,7 +43,10 @@ fun TimerItem(
                     )
                     Image(
                         painter = painterResource(id = R.drawable.ic_close),
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier.clickable {
+                            onEvent(TimerListEvent.OnDeleteTimerClick(timer, index))
+                        }
                     )
                 }
 
@@ -65,9 +63,12 @@ fun TimerItem(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Box(
-                        modifier = Modifier.clickable {
-                            /*todo: play or pause timer*/
-                        }
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                onEvent(TimerListEvent.OnTimerStateChange(timer))
+                            }
                     ) {
                         if (timer.isTimerRunning) {
                             Image(
@@ -82,11 +83,8 @@ fun TimerItem(
                                 modifier = Modifier.size(48.dp)
                             )
                         }
-
-
                     }
                 }
-
             }
         }
     }

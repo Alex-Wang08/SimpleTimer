@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 //@Entity
 data class Timer(
-//    @PrimaryKey val id: Int? = null,
+    val id: String,
     var label: String = "Timer",
     var originalTime: Long,
     var currentTime: Long,

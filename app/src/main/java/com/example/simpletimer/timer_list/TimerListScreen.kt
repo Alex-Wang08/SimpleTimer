@@ -5,14 +5,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.simpletimer.data.Timer
 import com.example.simpletimer.util.UiEvent
 import kotlinx.coroutines.flow.collect
 
@@ -21,9 +25,9 @@ fun TimerListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: TimerListViewModel = hiltViewModel()
 ) {
-    val timers = viewModel.timers
-    val scaffoldState = rememberScaffoldState()
+    val timers = viewModel.timersLiveData
 
+    val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -59,8 +63,9 @@ fun TimerListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(timers) { timer ->
+            itemsIndexed(timers) { index, timer  ->
                 TimerItem(
+                    index = index,
                     timer = timer,
                     onEvent = viewModel::onEvent,
                     modifier = Modifier.fillMaxWidth().padding(16.dp)

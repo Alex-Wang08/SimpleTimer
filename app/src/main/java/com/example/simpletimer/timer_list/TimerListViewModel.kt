@@ -1,5 +1,8 @@
 package com.example.simpletimer.timer_list
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simpletimer.data.Timer
@@ -18,39 +21,43 @@ class TimerListViewModel @Inject constructor(
 //    private val repository: TimerRepository
 
 ): ViewModel() {
-    var timers = ArrayList<Timer>()
-
+    private val _timers = ArrayList<Timer>()
+    val timersLiveData = mutableStateListOf<Timer>()
 
     init {
-        val timer1 =  Timer(
+        val timer1 = Timer(
+            id = "timer1",
             label = "timer1",
             originalTime = 20,
             currentTime = 20,
-            isTimerRunning = false
+            isTimerRunning = true
         )
         val timer2 = Timer(
-            label = "timer1",
+            id = "timer2",
+            label = "timer2",
             originalTime = 20,
             currentTime = 20,
             isTimerRunning = false
         )
-        val timer3 =  Timer(
-            label = "timer1",
+        val timer3 = Timer(
+            id = "timer3",
+            label = "timer3",
             originalTime = 20,
             currentTime = 20,
-            isTimerRunning = false
+            isTimerRunning = true
         )
         val timer4 = Timer(
-            label = "timer1",
+            id = "timer4",
+            label = "timer4",
             originalTime = 20,
             currentTime = 20,
             isTimerRunning = false
         )
-        timers.add(timer1)
-        timers.add(timer2)
-        timers.add(timer3)
-        timers.add(timer4)
-
+        _timers.add(timer1)
+        _timers.add(timer2)
+        _timers.add(timer3)
+        _timers.add(timer4)
+        timersLiveData.addAll(_timers)
     }
 
 
@@ -69,9 +76,18 @@ class TimerListViewModel @Inject constructor(
             is TimerListEvent.OnAddTimerClick -> {
                 sendUiEvent(UiEvent.Navigate(Routes.TIMER_ADD))
             }
+            is TimerListEvent.OnDeleteTimerClick -> {
+                deleteTimer(event.timer, event.index)
+            }
+            is TimerListEvent.OnTimerStateChange -> {
+
+            }
         }
     }
 
+    private fun deleteTimer(timer: Timer, index: Int) {
+        timersLiveData.removeAt(index)
+    }
 
     private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
