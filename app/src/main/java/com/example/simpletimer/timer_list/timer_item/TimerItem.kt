@@ -1,4 +1,4 @@
-package com.example.simpletimer.timer_list
+package com.example.simpletimer.timer_list.timer_item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simpletimer.R
 import com.example.simpletimer.data.Timer
+import com.example.simpletimer.timer_list.TimerListEvent
 
 @Composable
 fun TimerItem(
@@ -67,7 +68,7 @@ fun TimerItem(
                             .size(50.dp)
                             .clip(CircleShape)
                             .clickable {
-                                onEvent(TimerListEvent.OnTimerStateChange(timer))
+                                onEvent(TimerListEvent.OnTimerStateChange(timer, index))
                             }
                     ) {
                         if (timer.isTimerRunning) {

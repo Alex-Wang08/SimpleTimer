@@ -32,31 +32,31 @@ class TimerListViewModel @Inject constructor(
             currentTime = 20,
             isTimerRunning = true
         )
-        val timer2 = Timer(
-            id = "timer2",
-            label = "timer2",
-            originalTime = 20,
-            currentTime = 20,
-            isTimerRunning = false
-        )
-        val timer3 = Timer(
-            id = "timer3",
-            label = "timer3",
-            originalTime = 20,
-            currentTime = 20,
-            isTimerRunning = true
-        )
-        val timer4 = Timer(
-            id = "timer4",
-            label = "timer4",
-            originalTime = 20,
-            currentTime = 20,
-            isTimerRunning = false
-        )
+//        val timer2 = Timer(
+//            id = "timer2",
+//            label = "timer2",
+//            originalTime = 20,
+//            currentTime = 20,
+//            isTimerRunning = false
+//        )
+//        val timer3 = Timer(
+//            id = "timer3",
+//            label = "timer3",
+//            originalTime = 20,
+//            currentTime = 20,
+//            isTimerRunning = true
+//        )
+//        val timer4 = Timer(
+//            id = "timer4",
+//            label = "timer4",
+//            originalTime = 20,
+//            currentTime = 20,
+//            isTimerRunning = false
+//        )
         _timers.add(timer1)
-        _timers.add(timer2)
-        _timers.add(timer3)
-        _timers.add(timer4)
+//        _timers.add(timer2)
+//        _timers.add(timer3)
+//        _timers.add(timer4)
         timersLiveData.addAll(_timers)
     }
 
@@ -80,10 +80,36 @@ class TimerListViewModel @Inject constructor(
                 deleteTimer(event.timer, event.index)
             }
             is TimerListEvent.OnTimerStateChange -> {
+                changeTimerState(event.timer, event.index)
 
             }
         }
     }
+
+    private fun changeTimerState(timer: Timer, index: Int) {
+        val isTimerRunning = timer.isTimerRunning
+        timersLiveData[index] = timersLiveData[index].copy(isTimerRunning = !isTimerRunning)
+
+        if (isTimerRunning) {
+            cancelCountDown()
+        } else {
+            startCountDown()
+        }
+    }
+
+
+    private fun startCountDown() {
+
+    }
+
+
+    private fun cancelCountDown() {
+
+    }
+
+
+
+
 
     private fun deleteTimer(timer: Timer, index: Int) {
         timersLiveData.removeAt(index)
