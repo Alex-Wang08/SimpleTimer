@@ -120,7 +120,7 @@ class TimerListViewModel @Inject constructor(
     }
 
     private fun cancelCountDown(timer: Timer) {
-
+        countDownTimer?.cancel()
     }
 
 
