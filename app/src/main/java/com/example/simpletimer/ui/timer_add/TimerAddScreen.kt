@@ -32,8 +32,7 @@ fun TimerAddScreen(
     viewModel: TimerAddViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
-    val timeShow = viewModel.time.observeAsState(initial = "00:00:00")
-    val length = timeShow.value.length
+    val length = viewModel.timeString.length
 
     val focusRequester = remember { FocusRequester() }
 
@@ -91,7 +90,7 @@ fun TimerAddScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextField(
-                value = TextFieldValue(text = timeShow.value, selection = TextRange(length, length)), // keep cursor at the end
+                value = TextFieldValue(text = viewModel.timeString, selection = TextRange(length, length)), // keep cursor at the end
                 onValueChange = {
                     viewModel.onEvent(TimerAddEvent.OnTimeChange(it.text))
                 },

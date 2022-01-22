@@ -1,9 +1,12 @@
 package com.example.simpletimer.ui.timer_add
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.simpletimer.data.Timer
+import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.extension.*
 import com.example.simpletimer.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,13 +17,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimerAddViewModel @Inject constructor(
-
+    private val repository: TimerRepository
 ) : ViewModel() {
 
-    private val _time = MutableLiveData(TimerConstants.DEFAULT_TIME)
-    val time: LiveData<String>
-        get() = _time
-
+    var timeString by mutableStateOf(TimerConstants.DEFAULT_TIME)
+        private set
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -36,11 +37,31 @@ class TimerAddViewModel @Inject constructor(
             }
 
             is TimerAddEvent.OnSaveTimerClick -> {
+                saveTimer()
 
                 /*todo: save time to database*/
                 sendUiEvent(UiEvent.PopBackStack)
             }
 
+        }
+    }
+
+    private fun saveTimer() {
+        viewModelScope.launch {
+            if (timeString == TimerConstants.DEFAULT_TIME) {
+                sendUiEvent(UiEvent.ShowSnackBar(
+                    message = "You need set up a time"
+                ))
+                return@launch
+            }
+            repository.insertTimer(
+                Timer(
+                    label = "Timer",
+                    originalTime = timeString,
+                    currentTime = timeString,
+                    isRunning = true
+                )
+            )
         }
     }
 
@@ -56,6 +77,6 @@ class TimerAddViewModel @Inject constructor(
         // timer string in format of 12:23:56
         val timeLong = value.fromTimerStringToTimerLong()
         if (timeLong > TimerConstants.MAX_VALUE) return
-        _time.postValue(timeLong.fromTimerLongToTimerString())
+        timeString = timeLong.fromTimerLongToTimerString()
     }
 }

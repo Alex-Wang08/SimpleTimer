@@ -71,7 +71,7 @@ fun TimerItem(
                                 onEvent(TimerListEvent.OnTimerStateChange(timer, index))
                             }
                     ) {
-                        if (timer.isTimerRunning) {
+                        if (timer.isRunning) {
                             Image(
                                 painter = painterResource(R.drawable.ic_pause_circle_outline),
                                 contentDescription = null,
