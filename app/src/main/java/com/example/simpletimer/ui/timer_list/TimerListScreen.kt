@@ -32,6 +32,7 @@ fun TimerListScreen(
                 is UiEvent.ShowToastMessage -> onShowToastMessage(event)
                 is UiEvent.Navigate -> onNavigate(event)
                 is UiEvent.SendNotification -> onSendNotification(event)
+//                is UiEvent.RefreshList -> viewModel.onEvent(TimerListEvent.OnRefreshList)
                 else -> Unit
             }
         }

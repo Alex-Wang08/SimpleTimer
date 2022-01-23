@@ -4,7 +4,6 @@ import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simpletimer.MainViewModel
 import com.example.simpletimer.data.TimerObject
 import com.example.simpletimer.data.TimerRepository
@@ -38,7 +37,7 @@ class TimerListViewModel @Inject constructor(
 
     //region Init
     init {
-        loadTimerList()
+        loadTimerList(true)
     }
     //endregion
 
@@ -65,10 +64,15 @@ class TimerListViewModel @Inject constructor(
     //endregion
 
     // region Private Helpers
-    private fun loadTimerList() {
+    private fun loadTimerList(isFirstLoad: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             isRefreshing = true
             timers = withContext(Dispatchers.Default) { repository.getTimerList() }
+
+            if (isFirstLoad) {
+                timers.forEach { it.isRunning = false }
+            }
+
             mainViewModel.hasDatasetChanged = false
             timersLiveData.addAll(timers)
             isRefreshing = false
@@ -77,7 +81,7 @@ class TimerListViewModel @Inject constructor(
 
     private fun refreshTimerList() {
         if (!mainViewModel.hasDatasetChanged || isRefreshing) return
-        loadTimerList()
+        loadTimerList(false)
     }
 
     private fun createNewTimer() {
