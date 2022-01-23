@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.collect
 @Composable
 fun TimerListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
+    onSendNotification: (UiEvent.SendNotification) -> Unit,
     viewModel: TimerListViewModel = hiltViewModel()
 ) {
     val timerList = viewModel.timersLiveData
@@ -31,8 +32,9 @@ fun TimerListScreen(
                 is UiEvent.ShowSnackBar -> {
 
                 }
-
                 is UiEvent.Navigate -> onNavigate(event)
+                is UiEvent.SendNotification -> onSendNotification(event)
+
                 else -> Unit
             }
         }

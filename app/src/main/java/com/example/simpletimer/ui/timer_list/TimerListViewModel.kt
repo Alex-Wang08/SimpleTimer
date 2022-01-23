@@ -95,10 +95,18 @@ class TimerListViewModel @Inject constructor(
             }
 
             override fun onFinish() {
-                /*todo: send notification*/
+                sendUiEvent(UiEvent.SendNotification)
             }
         }
         countDownTimer?.start()
+    }
+
+    private fun sendTimerCompleteNotification() {
+
+
+
+
+
     }
 
     private fun updateCurrentTime(milliSecs: Long, index: Int) {
