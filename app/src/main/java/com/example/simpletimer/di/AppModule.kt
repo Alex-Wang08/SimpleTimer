@@ -2,6 +2,7 @@ package com.example.simpletimer.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.simpletimer.MainViewModel
 import com.example.simpletimer.data.TimerDatabase
 import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.data.TimerRepositoryImpl
@@ -30,4 +31,9 @@ object AppModule {
         return TimerRepositoryImpl(db.dao)
     }
 
+    @Provides
+    @Singleton
+    fun providesMainViewModel(): MainViewModel {
+        return MainViewModel()
+    }
 }

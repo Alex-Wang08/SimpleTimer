@@ -71,4 +71,6 @@ fun TimerListScreen(
             }
         }
     }
+
+    viewModel.onEvent(TimerListEvent.OnRefreshList)
 }

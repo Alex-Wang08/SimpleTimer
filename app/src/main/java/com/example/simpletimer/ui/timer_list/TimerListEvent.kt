@@ -7,4 +7,5 @@ sealed class TimerListEvent {
     data class OnTimerStateChange(val timer: TimerObject, val index: Int): TimerListEvent()
     data class OnAutoStartTimer(val timer: TimerObject, val index: Int): TimerListEvent()
     object OnAddTimerClick: TimerListEvent()
+    object OnRefreshList: TimerListEvent()
 }
