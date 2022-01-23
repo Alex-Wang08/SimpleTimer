@@ -118,7 +118,7 @@ class TimerListViewModel @Inject constructor(
             }
 
             override fun onFinish() {
-                sendUiEvent(UiEvent.SendNotification)
+                sendUiEvent(UiEvent.SendNotification(timerObject.label))
                 resetTimer(index)
             }
         }

@@ -74,7 +74,7 @@ class TimerAddViewModel @Inject constructor(
                         label = label,
                         originalTime = newTimeString,
                         currentTime = newTimeString,
-                        isRunning = true,
+                        isRunning = true, // automatically run by default
                         hasAutoStarted = false
                     )
                 )

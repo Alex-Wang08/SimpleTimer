@@ -1,5 +1,6 @@
 package com.example.simpletimer
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -33,13 +35,6 @@ class MainActivity : ComponentActivity() {
         this.window.statusBarColor = ContextCompat.getColor(this, R.color.blue)
 
         createNotificationChannel()
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Awesome notifications")
-            .setContentText("This is the content text")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
-
         val notificationManager = NotificationManagerCompat.from(this)
 
         setContent {
@@ -49,13 +44,13 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = Routes.TIMER_LIST
                 ) {
-                    composable(Routes.TIMER_LIST) {
+                    composable(Routes.TIMER_LIST + "") {
                         TimerListScreen(
                             onNavigate = {
                                 navController.navigate(it.route)
                             },
                             onSendNotification = {
-                                notificationManager.notify(NOTIFICATION_ID, notification)
+                                notificationManager.notify(NOTIFICATION_ID, createNotification(it.label))
                             },
                             onShowToastMessage = {
                                 Toast.makeText(
@@ -100,4 +95,14 @@ class MainActivity : ComponentActivity() {
             manager.createNotificationChannel(channel)
         }
     }
+
+    private fun createNotification(label: String): Notification {
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(resources.getString(R.string.app_name))
+            .setContentText("$label is completed!")
+            .setSmallIcon(R.drawable.ic_alarm_on)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+    }
+
 }

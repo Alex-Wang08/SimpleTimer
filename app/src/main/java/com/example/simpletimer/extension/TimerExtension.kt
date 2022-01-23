@@ -2,6 +2,7 @@ package com.example.simpletimer.extension
 
 import com.example.simpletimer.data.Timer
 import com.example.simpletimer.data.TimerObject
+import kotlin.math.ceil
 
 object TimerConstants {
     const val MAX_VALUE = 999999L
@@ -39,7 +40,7 @@ fun Long.fromSecondsToTimerString(): String {
 
 // 61000 -> 00:01:01
 fun Long.fromMillisecondsToTimerString(): String {
-    return (this / 1000).fromSecondsToTimerString()
+    return ceil(this / 1000.0).toLong().fromSecondsToTimerString()
 }
 
 // 101 -> 00:01:01
@@ -73,15 +74,14 @@ private fun Long.fromSecondsToTimerValue(): Triple<Long, Long, Long> {
     return Triple(hours, minutes, seconds)
 }
 
-
 // region mappers entity to object
 fun Timer.toTimerObject(): TimerObject {
     return TimerObject(
         id = this.id,
         label = this.label,
         originalTime = this.originalTime,
-        currentTime = this.currentTime,
-        isRunning = this.isRunning,
+        currentTime = this.originalTime,
+        isRunning = false,
         hasAutoStarted = false
     )
 }
@@ -90,9 +90,7 @@ fun TimerObject.toTimer(): Timer {
     return Timer(
         id = this.id,
         label = this.label,
-        originalTime = this.originalTime,
-        currentTime = this.currentTime,
-        isRunning = this.isRunning
+        originalTime = this.originalTime
     )
 }
 //endregion

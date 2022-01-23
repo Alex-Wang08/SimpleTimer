@@ -8,7 +8,5 @@ import androidx.room.PrimaryKey
 data class Timer(
     @PrimaryKey val id: Int? = null,
     @ColumnInfo(name= "label") var label: String,
-    @ColumnInfo(name="original_time") var originalTime: String,
-    @ColumnInfo(name = "current_time") var currentTime: String,
-    @ColumnInfo(name = "is_running")var isRunning: Boolean = false
+    @ColumnInfo(name="original_time") var originalTime: String
 )
