@@ -26,51 +26,22 @@ class TimerListViewModel @Inject constructor(
     private val mainViewModel: MainViewModel
 ) : ViewModel() {
 
+    //region Variables
     val timersLiveData = mutableStateListOf<TimerObject>()
     lateinit var timers: List<TimerObject>
-
     private var countDownTimer: CountDownTimer? = null
-
+    private var isRefreshing: Boolean = false
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+    //endregion
 
-    private var isRefreshing: Boolean = false
-
+    //region Init
     init {
         loadTimerList()
     }
-
-    private fun loadTimerList() {
-        viewModelScope.launch(Dispatchers.IO) {
-            isRefreshing = true
-            timers = withContext(Dispatchers.Default) { repository.getTimerList() }
-            mainViewModel.hasDatasetChanged = false
-            timersLiveData.addAll(timers)
-            isRefreshing = false
-        }
-    }
-
-    //region Lifecycle
-    override fun onCleared() {
-        countDownTimer?.cancel()
-        resetTimers()
-        super.onCleared()
-    }
     //endregion
 
-
-    private fun resetTimers() {
-        viewModelScope.launch {
-            timers.forEach { timerObject ->
-                timerObject.isRunning = false
-                timerObject.currentTime = timerObject.originalTime
-                val res  = async { repository.insertTimer(timerObject) }
-                res.await()
-            }
-        }
-    }
-
-
+    //region Event
     fun onEvent(event: TimerListEvent) {
         when (event) {
             is TimerListEvent.OnAddTimerClick -> {
@@ -86,12 +57,24 @@ class TimerListViewModel @Inject constructor(
                 autoStartCountDown(event.timer, event.index)
             }
             is TimerListEvent.OnRefreshList -> {
-                refreshTimerList(event.shouldRefresh, event.isFromTimerAddScreen)
+                refreshTimerList()
             }
         }
     }
+    //endregion
 
-    private fun refreshTimerList(shouldRefresh: Boolean, isFromTimerAddScreen: Boolean) {
+    // region Private Helpers
+    private fun loadTimerList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            isRefreshing = true
+            timers = withContext(Dispatchers.Default) { repository.getTimerList() }
+            mainViewModel.hasDatasetChanged = false
+            timersLiveData.addAll(timers)
+            isRefreshing = false
+        }
+    }
+
+    private fun refreshTimerList() {
         if (!mainViewModel.hasDatasetChanged || isRefreshing) return
         loadTimerList()
     }
@@ -112,17 +95,6 @@ class TimerListViewModel @Inject constructor(
     }
 
     private fun changeTimerState(timerObject: TimerObject, index: Int) {
-//        viewModelScope.launch {
-//            timer.isRunning = !timer.isRunning
-//            repository.insertTimer(timer.copy(isRunning = timer.isRunning))
-//
-//            if (timer.isRunning) {
-//                startCountDown(timer, index)
-//            } else {
-//                cancelCountDown(timer)
-//            }
-//        }
-
         val isRunning = !timerObject.isRunning
         timersLiveData[index] = timersLiveData[index].copy(isRunning = isRunning)
 
@@ -151,12 +123,7 @@ class TimerListViewModel @Inject constructor(
         countDownTimer?.start()
     }
 
-
     private fun updateCurrentTime(milliSecs: Long, index: Int) {
-//        viewModelScope.launch {
-//            val timeString = milliSecs.fromMillisecondsToTimerString()
-//            repository.insertTimer(timer.copy(currentTime = timeString))
-//        }
         val timeString = milliSecs.fromMillisecondsToTimerString()
         timersLiveData[index] = timersLiveData[index].copy(currentTime = timeString)
     }
@@ -178,4 +145,5 @@ class TimerListViewModel @Inject constructor(
             _uiEvent.send(event)
         }
     }
+    // endregion
 }
