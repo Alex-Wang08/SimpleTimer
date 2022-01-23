@@ -59,10 +59,10 @@ fun TimerListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(timerList) { index, timer  ->
+            itemsIndexed(timerList) { index, timerObject  ->
                 TimerItem(
                     index = index,
-                    timer = timer,
+                    timerObject = timerObject,
                     onEvent = viewModel::onEvent,
                     modifier = Modifier
                         .fillMaxWidth()

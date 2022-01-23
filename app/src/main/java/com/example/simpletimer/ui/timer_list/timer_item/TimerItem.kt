@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simpletimer.R
 import com.example.simpletimer.data.Timer
+import com.example.simpletimer.data.TimerObject
 import com.example.simpletimer.ui.timer_list.TimerListEvent
 
 @Composable
 fun TimerItem(
-    timer: Timer,
+    timerObject: TimerObject,
     index: Int,
     onEvent: (TimerListEvent) -> Unit,
     modifier: Modifier = Modifier
@@ -38,7 +39,7 @@ fun TimerItem(
                 .padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = timer.label,
+                        text = timerObject.label,
                         fontSize = 20.sp,
                         modifier = Modifier.weight(1f)
                     )
@@ -46,7 +47,7 @@ fun TimerItem(
                         painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = null,
                         modifier = Modifier.clickable {
-                            onEvent(TimerListEvent.OnDeleteTimerClick(timer, index))
+                            onEvent(TimerListEvent.OnDeleteTimerClick(timerObject, index))
                         }
                     )
                 }
@@ -58,7 +59,7 @@ fun TimerItem(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = timer.currentTime,
+                        text = timerObject.currentTime,
                         fontSize = 60.sp,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -68,11 +69,11 @@ fun TimerItem(
                             .size(50.dp)
                             .clip(CircleShape)
                             .clickable {
-                                onEvent(TimerListEvent.OnTimerStateChange(timer, index))
+                                onEvent(TimerListEvent.OnTimerStateChange(timerObject, index))
                             }
                     ) {
-                        if (timer.isRunning) {
-                            onEvent(TimerListEvent.OnAutoStartTimer(timer, index))
+                        if (timerObject.isRunning) {
+                            onEvent(TimerListEvent.OnAutoStartTimer(timerObject, index))
                             Image(
                                 painter = painterResource(R.drawable.ic_pause_circle_outline),
                                 contentDescription = null,

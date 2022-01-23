@@ -1,5 +1,8 @@
 package com.example.simpletimer.extension
 
+import com.example.simpletimer.data.Timer
+import com.example.simpletimer.data.TimerObject
+
 object TimerConstants {
     const val MAX_VALUE = 999999L
     const val STRING_FORMAT = "%02d:%02d:%02d"
@@ -69,3 +72,27 @@ private fun Long.fromSecondsToTimerValue(): Triple<Long, Long, Long> {
     val hours = totalMinutes / 60
     return Triple(hours, minutes, seconds)
 }
+
+
+// region mappers entity to object
+fun Timer.toTimerObject(): TimerObject {
+    return TimerObject(
+        id = this.id,
+        label = this.label,
+        originalTime = this.originalTime,
+        currentTime = this.currentTime,
+        isRunning = this.isRunning,
+        hasAutoStarted = false
+    )
+}
+
+fun TimerObject.toTimer(): Timer {
+    return Timer(
+        id = this.id,
+        label = this.label,
+        originalTime = this.originalTime,
+        currentTime = this.currentTime,
+        isRunning = this.isRunning
+    )
+}
+//endregion

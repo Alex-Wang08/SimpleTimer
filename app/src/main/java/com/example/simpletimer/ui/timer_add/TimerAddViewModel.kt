@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.simpletimer.data.Timer
+import com.example.simpletimer.data.TimerObject
 import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.extension.*
 import com.example.simpletimer.util.UiEvent
@@ -62,18 +62,21 @@ class TimerAddViewModel @Inject constructor(
 
         viewModelScope.launch {
             // we may encounter minute or second is over 60, for example: 01:70:91, recalculate it to normal value as: 02:11:31
-            val newTimeString = timeString.fromTimerStringToTimerLong().fromTimeLongToSeconds().fromSecondsToTimerString()
+            val newTimeString = timeString.fromTimerStringToTimerLong().fromTimeLongToSeconds()
+                .fromSecondsToTimerString()
             val label = if (timerLabel.isEmpty()) "Timer" else timerLabel
 
             val res = async {
                 repository.insertTimer(
-                Timer(
-                    label = label,
-                    originalTime = newTimeString,
-                    currentTime = newTimeString,
-                    isRunning = true
+                    TimerObject(
+                        label = label,
+                        originalTime = newTimeString,
+                        currentTime = newTimeString,
+                        isRunning = true,
+                        hasAutoStarted = false
+                    )
                 )
-            )}
+            }
             res.await()
             sendUiEvent(UiEvent.PopBackStack)
         }

@@ -1,8 +1,8 @@
 package com.example.simpletimer.data
 
 interface TimerRepository {
-    suspend fun insertTimer(timer: Timer)
-    suspend fun deleteTimer(timer: Timer)
-    suspend fun getTimerById(id: Int): Timer?
-    suspend fun getTimerList(): List<Timer>
+    suspend fun insertTimer(timerObject: TimerObject)
+    suspend fun deleteTimer(timerObject: TimerObject)
+    suspend fun getTimerById(id: Int): TimerObject?
+    suspend fun getTimerList(): List<TimerObject>
 }

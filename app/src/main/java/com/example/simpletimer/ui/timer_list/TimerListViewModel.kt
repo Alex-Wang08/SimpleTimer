@@ -4,7 +4,7 @@ import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.simpletimer.data.Timer
+import com.example.simpletimer.data.TimerObject
 import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.extension.*
 import com.example.simpletimer.util.Routes
@@ -22,10 +22,9 @@ class TimerListViewModel @Inject constructor(
     private val repository: TimerRepository
 ) : ViewModel() {
 
-    val timersLiveData = mutableStateListOf<Timer>()
+    val timersLiveData = mutableStateListOf<TimerObject>()
 
     private var countDownTimer: CountDownTimer? = null
-    private var hasAutoStartCountDown = false
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -63,14 +62,14 @@ class TimerListViewModel @Inject constructor(
         }
     }
 
-    private fun autoStartCountDown(timer: Timer, index: Int) {
-        if (!timer.isRunning || hasAutoStartCountDown) return
+    private fun autoStartCountDown(timerObject: TimerObject, index: Int) {
+        if (!timerObject.isRunning || timerObject.hasAutoStarted) return
 
-        startCountDown(timer, index)
-        hasAutoStartCountDown = true
+        startCountDown(timerObject, index)
+        timerObject.hasAutoStarted = true
     }
 
-    private fun changeTimerState(timer: Timer, index: Int) {
+    private fun changeTimerState(timerObject: TimerObject, index: Int) {
 //        viewModelScope.launch {
 //            timer.isRunning = !timer.isRunning
 //            repository.insertTimer(timer.copy(isRunning = timer.isRunning))
@@ -82,20 +81,20 @@ class TimerListViewModel @Inject constructor(
 //            }
 //        }
 
-        val isRunning = !timer.isRunning
+        val isRunning = !timerObject.isRunning
         timersLiveData[index] = timersLiveData[index].copy(isRunning = isRunning)
 
         if (isRunning) {
-            startCountDown(timer, index)
+            startCountDown(timerObject, index)
         } else {
-            cancelCountDown(timer)
+            cancelCountDown(timerObject)
         }
     }
 
-    private fun startCountDown(timer: Timer, index: Int) {
+    private fun startCountDown(timerObject: TimerObject, index: Int) {
         countDownTimer?.cancel()
 
-        val totalTimeInMilliseconds = timer.currentTime.fromTimerStringToMilliseconds()
+        val totalTimeInMilliseconds = timerObject.currentTime.fromTimerStringToMilliseconds()
 
         countDownTimer = object : CountDownTimer(totalTimeInMilliseconds, 1000) {
 
@@ -110,13 +109,6 @@ class TimerListViewModel @Inject constructor(
         countDownTimer?.start()
     }
 
-    private fun sendTimerCompleteNotification() {
-
-
-
-
-
-    }
 
     private fun updateCurrentTime(milliSecs: Long, index: Int) {
 //        viewModelScope.launch {
@@ -127,14 +119,14 @@ class TimerListViewModel @Inject constructor(
         timersLiveData[index] = timersLiveData[index].copy(currentTime = timeString)
     }
 
-    private fun cancelCountDown(timer: Timer) {
+    private fun cancelCountDown(timerObject: TimerObject) {
         countDownTimer?.cancel()
     }
 
-    private fun deleteTimer(timer: Timer, index: Int) {
+    private fun deleteTimer(timerObject: TimerObject, index: Int) {
         countDownTimer?.cancel()
         viewModelScope.launch {
-            repository.deleteTimer(timer)
+            repository.deleteTimer(timerObject)
             timersLiveData.removeAt(index)
         }
     }
