@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.simpletimer.MainViewModel
 import com.example.simpletimer.data.TimerObject
 import com.example.simpletimer.data.TimerRepository
@@ -101,7 +102,7 @@ class TimerListViewModel @Inject constructor(
         if (isRunning) {
             startCountDown(timerObject, index)
         } else {
-            cancelCountDown(timerObject)
+            cancelCountDown()
         }
     }
 
@@ -118,9 +119,22 @@ class TimerListViewModel @Inject constructor(
 
             override fun onFinish() {
                 sendUiEvent(UiEvent.SendNotification)
+                resetTimer(index)
             }
         }
         countDownTimer?.start()
+    }
+
+    private fun resetTimer(index: Int) {
+        val originalTime = timersLiveData[index].originalTime
+        val newTimer = timersLiveData[index].copy(currentTime = originalTime, isRunning = false)
+        viewModelScope.launch {
+            val res = async {
+                repository.insertTimer(newTimer)
+            }
+            res.await()
+            timersLiveData[index] = newTimer
+        }
     }
 
     private fun updateCurrentTime(milliSecs: Long, index: Int) {
@@ -128,7 +142,7 @@ class TimerListViewModel @Inject constructor(
         timersLiveData[index] = timersLiveData[index].copy(currentTime = timeString)
     }
 
-    private fun cancelCountDown(timerObject: TimerObject) {
+    private fun cancelCountDown() {
         countDownTimer?.cancel()
     }
 
