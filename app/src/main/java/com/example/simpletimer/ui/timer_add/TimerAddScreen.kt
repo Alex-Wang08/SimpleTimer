@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.collect
 @Composable
 fun TimerAddScreen(
     onPopBackStack: () -> Unit,
+    onShowToastMessage: (UiEvent.ShowToastMessage) -> Unit,
     viewModel: TimerAddViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -45,6 +46,7 @@ fun TimerAddScreen(
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.PopBackStack -> onPopBackStack()
+                is UiEvent.ShowToastMessage -> onShowToastMessage(event)
                 else -> Unit
             }
         }

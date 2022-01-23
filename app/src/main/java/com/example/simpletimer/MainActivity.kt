@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.app.NotificationCompat
@@ -27,10 +28,9 @@ class MainActivity : ComponentActivity() {
     val CHANNEL_NAME = "channelName"
     val NOTIFICATION_ID = 0
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.window.statusBarColor = ContextCompat.getColor(this,R.color.blue)
+        this.window.statusBarColor = ContextCompat.getColor(this, R.color.blue)
 
         createNotificationChannel()
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
             .build()
 
         val notificationManager = NotificationManagerCompat.from(this)
-
 
         setContent {
             SimpleTimerTheme {
@@ -57,24 +56,42 @@ class MainActivity : ComponentActivity() {
                             },
                             onSendNotification = {
                                 notificationManager.notify(NOTIFICATION_ID, notification)
+                            },
+                            onShowToastMessage = {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "a timer is already running...",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         )
                     }
 
                     composable(Routes.TIMER_ADD) {
-                        TimerAddScreen(onPopBackStack = { navController.popBackStack() })
+                        TimerAddScreen(
+                            onPopBackStack = {
+                                navController.popBackStack()
+                            },
+                            onShowToastMessage = {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "No value is assigned to the timer",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        )
                     }
                 }
             }
         }
-
-
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT).apply {
+            val channel = NotificationChannel(
+                CHANNEL_ID, CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
                 lightColor = Color.GREEN
                 enableLights(true)
             }
@@ -82,6 +99,5 @@ class MainActivity : ComponentActivity() {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
-
     }
 }

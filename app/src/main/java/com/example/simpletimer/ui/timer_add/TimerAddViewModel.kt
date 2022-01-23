@@ -56,9 +56,7 @@ class TimerAddViewModel @Inject constructor(
     // region Private Helpers
     private fun saveTimer() {
         if (timeString == TimerConstants.DEFAULT_TIME_STRING) {
-            sendUiEvent(UiEvent.ShowSnackBar(
-                message = "You need set up a time"
-            ))
+            sendUiEvent(UiEvent.ShowToastMessage)
             return
         }
 

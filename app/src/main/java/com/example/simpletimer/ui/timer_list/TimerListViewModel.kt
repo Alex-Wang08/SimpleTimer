@@ -40,7 +40,8 @@ class TimerListViewModel @Inject constructor(
     fun onEvent(event: TimerListEvent) {
         when (event) {
             is TimerListEvent.OnAddTimerClick -> {
-                sendUiEvent(UiEvent.Navigate(Routes.TIMER_ADD))
+                createNewTimer()
+
             }
             is TimerListEvent.OnDeleteTimerClick -> {
                 deleteTimer(event.timer, event.index)
@@ -51,6 +52,14 @@ class TimerListViewModel @Inject constructor(
             is TimerListEvent.OnAutoStartTimer -> {
                 autoStartCountDown(event.timer, event.index)
             }
+        }
+    }
+
+    private fun createNewTimer() {
+        if (timersLiveData.size > 0) {
+            sendUiEvent(UiEvent.ShowToastMessage)
+        } else {
+            sendUiEvent(UiEvent.Navigate(Routes.TIMER_ADD))
         }
     }
 
