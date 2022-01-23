@@ -15,5 +15,5 @@ interface TimerDao {
     suspend fun getTimerById(id: Int): Timer?
 
     @Query("SELECT * FROM Timer")
-    fun getTimerList(): Flow<List<Timer>>
+    fun getTimerList(): List<Timer>
 }

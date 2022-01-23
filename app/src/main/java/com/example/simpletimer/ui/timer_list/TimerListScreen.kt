@@ -23,7 +23,7 @@ fun TimerListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: TimerListViewModel = hiltViewModel()
 ) {
-    val timerList = viewModel.timerList.collectAsState(initial = emptyList())
+    val timerList = viewModel.timersLiveData
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -60,7 +60,7 @@ fun TimerListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(timerList.value) { index, timer  ->
+            itemsIndexed(timerList) { index, timer  ->
                 TimerItem(
                     index = index,
                     timer = timer,

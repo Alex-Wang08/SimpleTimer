@@ -1,7 +1,5 @@
 package com.example.simpletimer.data
 
-import kotlinx.coroutines.flow.Flow
-
 class TimerRepositoryImpl(
     private val dao: TimerDao
 ) : TimerRepository {
@@ -18,7 +16,7 @@ class TimerRepositoryImpl(
         return dao.getTimerById(id)
     }
 
-    override fun getTimerList(): Flow<List<Timer>> {
+    override suspend fun getTimerList(): List<Timer> {
         return dao.getTimerList()
     }
 }
