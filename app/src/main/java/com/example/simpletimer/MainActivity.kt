@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = Routes.TIMER_LIST
                 ) {
-                    composable(Routes.TIMER_LIST + "") {
+                    composable(Routes.TIMER_LIST) {
                         TimerListScreen(
                             onNavigate = {
                                 navController.navigate(it.route)
