@@ -20,7 +20,10 @@ class TimerAddViewModel @Inject constructor(
     private val repository: TimerRepository
 ) : ViewModel() {
 
-    var timeString by mutableStateOf(TimerConstants.DEFAULT_TIME)
+    var timerLabel by mutableStateOf("")
+        private set
+
+    var timeString by mutableStateOf(TimerConstants.DEFAULT_TIME_STRING)
         private set
 
     private val _uiEvent = Channel<UiEvent>()
@@ -30,6 +33,10 @@ class TimerAddViewModel @Inject constructor(
         when (event) {
             is TimerAddEvent.OnTimeChange -> {
                 updateTimerValue(event.time)
+            }
+
+            is TimerAddEvent.OnLabelChange -> {
+                updateTimerLabel(event.label)
             }
 
             is TimerAddEvent.OnCancelClick -> {
@@ -48,7 +55,7 @@ class TimerAddViewModel @Inject constructor(
 
     private fun saveTimer() {
         viewModelScope.launch {
-            if (timeString == TimerConstants.DEFAULT_TIME) {
+            if (timeString == TimerConstants.DEFAULT_TIME_STRING) {
                 sendUiEvent(UiEvent.ShowSnackBar(
                     message = "You need set up a time"
                 ))
@@ -81,5 +88,10 @@ class TimerAddViewModel @Inject constructor(
         val timeLong = value.fromTimerStringToTimerLong()
         if (timeLong > TimerConstants.MAX_VALUE) return
         timeString = timeLong.fromTimerLongToTimerString()
+    }
+
+    private fun updateTimerLabel(label: String?) {
+        if (timerLabel == label) return
+        timerLabel = label ?: ""
     }
 }

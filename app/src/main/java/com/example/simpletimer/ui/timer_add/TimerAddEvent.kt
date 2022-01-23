@@ -4,4 +4,5 @@ sealed class TimerAddEvent {
     object OnCancelClick: TimerAddEvent()
     object OnSaveTimerClick: TimerAddEvent()
     data class OnTimeChange(val time: String?): TimerAddEvent()
+    data class OnLabelChange(val label: String?): TimerAddEvent()
 }

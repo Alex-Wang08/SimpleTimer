@@ -4,7 +4,7 @@ object TimerConstants {
     const val MAX_VALUE = 999999L
     const val STRING_FORMAT = "%02d:%02d:%02d"
     const val REGEX_DIGIT = """[^0-9]"""
-    const val DEFAULT_TIME = "00:00:00"
+    const val DEFAULT_TIME_STRING = "00:00:00"
 }
 
 // 10:01:01 -> 100101

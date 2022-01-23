@@ -6,7 +6,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.simpletimer.R
 import com.example.simpletimer.ui.theme.Blue
 import com.example.simpletimer.util.UiEvent
 import kotlinx.coroutines.delay
@@ -68,7 +69,7 @@ fun TimerAddScreen(
                         viewModel.onEvent(TimerAddEvent.OnSaveTimerClick)
                     }) {
                         Text(
-                            text = "SET",
+                            text = stringResource(id = R.string.label_set),
                             color = Color.White,
                         )
                     }
@@ -76,15 +77,28 @@ fun TimerAddScreen(
             )
         }
     ) {
-
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-
-            Text(
-                text = "Timer",
-                color = Color.Black,
-                modifier = Modifier.padding(16.dp)
+            TextField(
+                value = viewModel.timerLabel,
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.placeholder_timer),
+                        fontSize = 20.sp
+                    )
+                },
+                onValueChange = {
+                    viewModel.onEvent(TimerAddEvent.OnLabelChange(it))
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 20.sp
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
