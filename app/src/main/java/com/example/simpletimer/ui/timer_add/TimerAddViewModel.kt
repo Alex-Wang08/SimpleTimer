@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.simpletimer.MainViewModel
 import com.example.simpletimer.data.TimerObject
 import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.extension.*
@@ -18,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TimerAddViewModel @Inject constructor(
-    private val repository: TimerRepository,
-    private val mainViewModel: MainViewModel
+    private val repository: TimerRepository
 ) : ViewModel() {
 
     //region Variables
@@ -80,8 +78,8 @@ class TimerAddViewModel @Inject constructor(
                 )
             }
             res.await()
-            mainViewModel.hasDatasetChanged = true
             sendUiEvent(UiEvent.PopBackStack)
+            sendUiEvent(UiEvent.RefreshList)
         }
     }
 
