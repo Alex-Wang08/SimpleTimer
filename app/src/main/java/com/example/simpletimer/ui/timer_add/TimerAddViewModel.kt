@@ -10,9 +10,9 @@ import com.example.simpletimer.data.TimerRepository
 import com.example.simpletimer.extension.*
 import com.example.simpletimer.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,12 +20,15 @@ class TimerAddViewModel @Inject constructor(
     private val repository: TimerRepository
 ) : ViewModel() {
 
+    //region Variables
     var timerLabel by mutableStateOf("")
         private set
 
     var timeString by mutableStateOf(TimerConstants.DEFAULT_TIME_STRING)
         private set
+    //endregion
 
+    //region Events
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -45,33 +48,36 @@ class TimerAddViewModel @Inject constructor(
 
             is TimerAddEvent.OnSaveTimerClick -> {
                 saveTimer()
-
-                /*todo: save time to database*/
-                sendUiEvent(UiEvent.PopBackStack)
             }
-
         }
     }
+    //endregion
 
+    // region Private Helpers
     private fun saveTimer() {
-        viewModelScope.launch {
-            if (timeString == TimerConstants.DEFAULT_TIME_STRING) {
-                sendUiEvent(UiEvent.ShowSnackBar(
-                    message = "You need set up a time"
-                ))
-                return@launch
-            }
+        if (timeString == TimerConstants.DEFAULT_TIME_STRING) {
+            sendUiEvent(UiEvent.ShowSnackBar(
+                message = "You need set up a time"
+            ))
+            return
+        }
 
-            // we may encounter minute or second is over 60: 01:70:91, recalculate it to normal value
+        viewModelScope.launch {
+            // we may encounter minute or second is over 60, for example: 01:70:91, recalculate it to normal value as: 02:11:31
             val newTimeString = timeString.fromTimerStringToTimerLong().fromTimeLongToSeconds().fromSecondsToTimerString()
-            repository.insertTimer(
+            val label = if (timerLabel.isEmpty()) "Timer" else timerLabel
+
+            val res = async {
+                repository.insertTimer(
                 Timer(
-                    label = "Timer",
+                    label = label,
                     originalTime = newTimeString,
                     currentTime = newTimeString,
                     isRunning = true
                 )
-            )
+            )}
+            res.await()
+            sendUiEvent(UiEvent.PopBackStack)
         }
     }
 
@@ -94,4 +100,5 @@ class TimerAddViewModel @Inject constructor(
         if (timerLabel == label) return
         timerLabel = label ?: ""
     }
+    //endregion
 }
