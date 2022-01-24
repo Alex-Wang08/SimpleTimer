@@ -1,4 +1,4 @@
-package com.example.simpletimer.ui.timer_add
+package com.example.simpletimer.ui.new_timer
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,14 +24,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.simpletimer.R
 import com.example.simpletimer.ui.theme.Blue
 import com.example.simpletimer.util.UiEvent
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 
 @Composable
-fun TimerAddScreen(
+fun NewTimerScreen(
     onPopBackStack: () -> Unit,
     onShowToastMessage: (UiEvent.ShowToastMessage) -> Unit,
-    viewModel: TimerAddViewModel = hiltViewModel()
+    viewModel: NewTimerViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
     val length = viewModel.timeString.length
@@ -40,7 +39,6 @@ fun TimerAddScreen(
 
     LaunchedEffect(key1 = true) {
         // auto pop up the keyboard
-        delay(300)
         focusRequester.requestFocus()
 
         viewModel.uiEvent.collect { event ->
@@ -60,7 +58,7 @@ fun TimerAddScreen(
                 backgroundColor = Blue,
                 navigationIcon = {
                     IconButton(onClick = {
-                        viewModel.onEvent(TimerAddEvent.OnCancelClick)
+                        viewModel.onEvent(NewTimerEvent.OnCancelClick)
                     }) {
                         Icon(imageVector = Icons.Filled.Clear, contentDescription = "")
 
@@ -68,7 +66,7 @@ fun TimerAddScreen(
                 },
                 actions = {
                     TextButton(onClick = {
-                        viewModel.onEvent(TimerAddEvent.OnSaveTimerClick)
+                        viewModel.onEvent(NewTimerEvent.OnSaveTimerClick)
                     }) {
                         Text(
                             text = stringResource(id = R.string.label_set),
@@ -91,7 +89,7 @@ fun TimerAddScreen(
                     )
                 },
                 onValueChange = {
-                    viewModel.onEvent(TimerAddEvent.OnLabelChange(it))
+                    viewModel.onEvent(NewTimerEvent.OnLabelChange(it))
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent,
@@ -109,7 +107,7 @@ fun TimerAddScreen(
             TextField(
                 value = TextFieldValue(text = viewModel.timeString, selection = TextRange(length, length)), // keep cursor at the end
                 onValueChange = {
-                    viewModel.onEvent(TimerAddEvent.OnTimeChange(it.text))
+                    viewModel.onEvent(NewTimerEvent.OnTimeChange(it.text))
                 },
                 modifier = Modifier
                     .fillMaxWidth()

@@ -11,7 +11,7 @@ object TimerConstants {
     const val DEFAULT_TIME_STRING = "00:00:00"
 }
 
-// 10:01:01 -> 100101
+// "10:01:01" -> 100101
 fun String?.fromTimerStringToTimerLong(): Long {
     return this?.replace(TimerConstants.REGEX_DIGIT.toRegex(), "")?.toLong() ?: 0L
 }
@@ -32,18 +32,18 @@ fun Long.fromTimerLongToMillisecond(): Long {
     return this.fromTimeLongToSeconds() * 1000
 }
 
-// 61 -> string 00:01:01
+// 61 -> "00:01:01"
 fun Long.fromSecondsToTimerString(): String {
     val (hours, minutes, seconds) = this.fromSecondsToTimerValue()
     return String.format(TimerConstants.STRING_FORMAT, hours, minutes, seconds)
 }
 
-// 61000 -> 00:01:01
+// 61000 -> "00:01:01"
 fun Long.fromMillisecondsToTimerString(): String {
     return ceil(this / 1000.0).toLong().fromSecondsToTimerString()
 }
 
-// 101 -> 00:01:01
+// 101 -> "00:01:01"
 fun Long.fromTimerLongToTimerString(): String {
     val (hours, minutes, seconds) = this.fromTimerLongToTimerValue()
     return String.format(TimerConstants.STRING_FORMAT, hours, minutes, seconds)
@@ -74,7 +74,7 @@ private fun Long.fromSecondsToTimerValue(): Triple<Long, Long, Long> {
     return Triple(hours, minutes, seconds)
 }
 
-// region mappers entity to object
+// region database mappers
 fun Timer.toTimerObject(): TimerObject {
     return TimerObject(
         id = this.id,

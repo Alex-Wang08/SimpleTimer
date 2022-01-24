@@ -1,4 +1,4 @@
-package com.example.simpletimer.ui.timer_list
+package com.example.simpletimer.ui.show_timer
 
 import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateListOf
@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class TimerListViewModel @Inject constructor(
+class ShowTimerViewModel @Inject constructor(
     private val repository: TimerRepository,
     private val mainViewModel: MainViewModel
 ) : ViewModel() {
@@ -37,18 +37,18 @@ class TimerListViewModel @Inject constructor(
     //endregion
 
     //region Event
-    fun onEvent(event: TimerListEvent) {
+    fun onEvent(event: ShowTimerEvent) {
         when (event) {
-            is TimerListEvent.OnAddTimerClick -> {
+            is ShowTimerEvent.OnAddTimerClick -> {
                 createNewTimer()
             }
-            is TimerListEvent.OnDeleteTimerClick -> {
+            is ShowTimerEvent.OnDeleteTimerClick -> {
                 deleteTimer(event.timer, event.index)
             }
-            is TimerListEvent.OnTimerStateChange -> {
+            is ShowTimerEvent.OnTimerStateChange -> {
                 changeTimerState(event.timer, event.index)
             }
-            is TimerListEvent.OnAutoStartTimer -> {
+            is ShowTimerEvent.OnAutoStartTimer -> {
                 autoStartCountDown(event.timer, event.index)
             }
         }

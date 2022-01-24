@@ -1,4 +1,4 @@
-package com.example.simpletimer.ui.timer_add
+package com.example.simpletimer.ui.new_timer
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class TimerAddViewModel @Inject constructor(
+class NewTimerViewModel @Inject constructor(
     private val repository: TimerRepository,
     private val mainViewModel: MainViewModel
 ) : ViewModel() {
@@ -34,21 +34,21 @@ class TimerAddViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun onEvent(event: TimerAddEvent) {
+    fun onEvent(event: NewTimerEvent) {
         when (event) {
-            is TimerAddEvent.OnTimeChange -> {
+            is NewTimerEvent.OnTimeChange -> {
                 updateTimerValue(event.time)
             }
 
-            is TimerAddEvent.OnLabelChange -> {
+            is NewTimerEvent.OnLabelChange -> {
                 updateTimerLabel(event.label)
             }
 
-            is TimerAddEvent.OnCancelClick -> {
+            is NewTimerEvent.OnCancelClick -> {
                 sendUiEvent(UiEvent.PopBackStack)
             }
 
-            is TimerAddEvent.OnSaveTimerClick -> {
+            is NewTimerEvent.OnSaveTimerClick -> {
                 saveTimer()
             }
         }

@@ -1,4 +1,4 @@
-package com.example.simpletimer.ui.timer_list
+package com.example.simpletimer.ui.show_timer
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,16 +13,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.simpletimer.ui.timer_list.timer_item.TimerItem
+import com.example.simpletimer.ui.show_timer.timer_item.TimerItem
 import com.example.simpletimer.util.UiEvent
 import kotlinx.coroutines.flow.collect
 
 @Composable
-fun TimerListScreen(
+fun ShowTimerScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     onSendNotification: (UiEvent.SendNotification) -> Unit,
     onShowToastMessage: (UiEvent.ShowToastMessage) -> Unit,
-    viewModel: TimerListViewModel = hiltViewModel()
+    viewModel: ShowTimerViewModel = hiltViewModel()
 ) {
     val timerList = viewModel.timersLiveData
     val scaffoldState = rememberScaffoldState()
@@ -49,7 +49,7 @@ fun TimerListScreen(
 
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                viewModel.onEvent(TimerListEvent.OnAddTimerClick)
+                viewModel.onEvent(ShowTimerEvent.OnAddTimerClick)
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,

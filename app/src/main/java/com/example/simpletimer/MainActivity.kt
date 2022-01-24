@@ -10,25 +10,27 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.simpletimer.ui.timer_add.TimerAddScreen
-import com.example.simpletimer.ui.timer_list.TimerListScreen
+import com.example.simpletimer.ui.new_timer.NewTimerScreen
+import com.example.simpletimer.ui.show_timer.ShowTimerScreen
 import com.example.simpletimer.ui.theme.SimpleTimerTheme
 import com.example.simpletimer.util.Routes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    val CHANNEL_ID = "channelId"
-    val CHANNEL_NAME = "channelName"
-    val NOTIFICATION_ID = 0
+    //region Constants
+    companion object {
+        const val CHANNEL_ID = "channelId"
+        const val CHANNEL_NAME = "channelName"
+        const val NOTIFICATION_ID = 0
+    }
+    //endregion
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = Routes.TIMER_LIST
                 ) {
                     composable(Routes.TIMER_LIST) {
-                        TimerListScreen(
+                        ShowTimerScreen(
                             onNavigate = {
                                 navController.navigate(it.route)
                             },
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
                             onShowToastMessage = {
                                 Toast.makeText(
                                     this@MainActivity,
-                                    "a timer is already running...",
+                                    resources.getString(R.string.toast_massage_timer_already_is_running),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -63,14 +65,14 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(Routes.TIMER_ADD) {
-                        TimerAddScreen(
+                        NewTimerScreen(
                             onPopBackStack = {
                                 navController.popBackStack()
                             },
                             onShowToastMessage = {
                                 Toast.makeText(
                                     this@MainActivity,
-                                    "No value is assigned to the timer",
+                                    resources.getString(R.string.toast_message_no_value_warning),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -81,6 +83,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    //region Private Helpers
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -99,10 +102,10 @@ class MainActivity : ComponentActivity() {
     private fun createNotification(label: String): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(resources.getString(R.string.app_name))
-            .setContentText("$label is completed!")
+            .setContentText(resources.getString(R.string.notification_content, label))
             .setSmallIcon(R.drawable.ic_alarm_on)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
     }
-
+    //endregion
 }

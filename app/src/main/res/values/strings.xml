@@ -4,5 +4,7 @@
 
     <string name="label_set">SET</string>
     <string name="placeholder_timer">Timer</string>
-
+    <string name="toast_massage_timer_already_is_running">a timer is already running…</string>
+    <string name="toast_message_no_value_warning">No value is assigned to the timer</string>
+    <string name="notification_content">%1$s is completed!</string>
 </resources>

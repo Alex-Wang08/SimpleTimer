@@ -1,4 +1,4 @@
-package com.example.simpletimer.ui.timer_list.timer_item
+package com.example.simpletimer.ui.show_timer.timer_item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,19 +16,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simpletimer.R
-import com.example.simpletimer.data.Timer
 import com.example.simpletimer.data.TimerObject
-import com.example.simpletimer.ui.timer_list.TimerListEvent
+import com.example.simpletimer.ui.show_timer.ShowTimerEvent
 
 @Composable
 fun TimerItem(
     timerObject: TimerObject,
     index: Int,
-    onEvent: (TimerListEvent) -> Unit,
+    onEvent: (ShowTimerEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LaunchedEffect(key1 = true) {
-        onEvent(TimerListEvent.OnAutoStartTimer(timerObject, index))
+        onEvent(ShowTimerEvent.OnAutoStartTimer(timerObject, index))
     }
     Box(
         modifier = modifier
@@ -53,7 +52,7 @@ fun TimerItem(
                         modifier = Modifier
                             .size(35.dp)
                             .clickable {
-                                onEvent(TimerListEvent.OnDeleteTimerClick(timerObject, index))
+                                onEvent(ShowTimerEvent.OnDeleteTimerClick(timerObject, index))
                             }
                     )
                 }
@@ -75,7 +74,7 @@ fun TimerItem(
                             .size(50.dp)
                             .clip(CircleShape)
                             .clickable {
-                                onEvent(TimerListEvent.OnTimerStateChange(timerObject, index))
+                                onEvent(ShowTimerEvent.OnTimerStateChange(timerObject, index))
                             }
                     ) {
                         if (timerObject.isRunning) {
