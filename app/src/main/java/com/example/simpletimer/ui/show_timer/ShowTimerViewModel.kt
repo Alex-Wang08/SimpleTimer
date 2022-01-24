@@ -147,6 +147,7 @@ class ShowTimerViewModel @Inject constructor(
     }
 
     private fun deleteTimer(timerObject: TimerObject, index: Int) {
+        // remove from database and in-memory data (it will update the UI)
         countDownTimer?.cancel()
         viewModelScope.launch {
             repository.deleteTimer(timerObject)
