@@ -27,7 +27,7 @@ fun TimerListScreen(
     val timerList = viewModel.timersLiveData
     val scaffoldState = rememberScaffoldState()
     LaunchedEffect(key1 = true) {
-        viewModel.loadTimerList(false)
+        viewModel.loadTimerList()
 
         viewModel.uiEvent.collect { event ->
             when (event) {
@@ -73,6 +73,4 @@ fun TimerListScreen(
             }
         }
     }
-
-    viewModel.onEvent(TimerListEvent.OnRefreshList)
 }

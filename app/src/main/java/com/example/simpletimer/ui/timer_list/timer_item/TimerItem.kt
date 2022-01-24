@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,9 @@ fun TimerItem(
     onEvent: (TimerListEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(key1 = true) {
+        onEvent(TimerListEvent.OnAutoStartTimer(timerObject, index))
+    }
     Box(
         modifier = modifier
     ) {
@@ -46,9 +50,11 @@ fun TimerItem(
                     Image(
                         painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = null,
-                        modifier = Modifier.size(35.dp).clickable {
-                            onEvent(TimerListEvent.OnDeleteTimerClick(timerObject, index))
-                        }
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clickable {
+                                onEvent(TimerListEvent.OnDeleteTimerClick(timerObject, index))
+                            }
                     )
                 }
 
@@ -73,7 +79,6 @@ fun TimerItem(
                             }
                     ) {
                         if (timerObject.isRunning) {
-                            onEvent(TimerListEvent.OnAutoStartTimer(timerObject, index))
                             Image(
                                 painter = painterResource(R.drawable.ic_pause_circle_outline),
                                 contentDescription = null,

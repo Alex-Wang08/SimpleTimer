@@ -30,7 +30,7 @@ class TimerListViewModel @Inject constructor(
     val timersLiveData = mutableStateListOf<TimerObject>()
     lateinit var timers: List<TimerObject>
     private var countDownTimer: CountDownTimer? = null
-    private var isRefreshing: Boolean = false
+    private var isLoading: Boolean = false
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
     var isFirstLoad: Boolean = true
@@ -51,34 +51,26 @@ class TimerListViewModel @Inject constructor(
             is TimerListEvent.OnAutoStartTimer -> {
                 autoStartCountDown(event.timer, event.index)
             }
-            is TimerListEvent.OnRefreshList -> {
-                refreshTimerList()
-            }
         }
     }
     //endregion
 
     // region Private Helpers
-    fun loadTimerList(isRefresh: Boolean = false) {
-        if (!isRefresh && !isFirstLoad) return
+    fun loadTimerList() {
+        if (!isFirstLoad && !mainViewModel.hasDatasetChanged) return
 
         viewModelScope.launch(Dispatchers.IO) {
-            isRefreshing = true
+            isLoading = true
             timers = withContext(Dispatchers.Default) { repository.getTimerList() }
-            timers.forEach { it.isRunning = isRefresh }
+            timers.forEach { it.isRunning = !isFirstLoad }
 
             mainViewModel.hasDatasetChanged = false
             timersLiveData.clear()
             timersLiveData.addAll(timers)
 
-            isRefreshing = false
+            isLoading = false
             isFirstLoad = false
         }
-    }
-
-    private fun refreshTimerList() {
-        if (!mainViewModel.hasDatasetChanged || isRefreshing) return
-        loadTimerList(true)
     }
 
     private fun createNewTimer() {
