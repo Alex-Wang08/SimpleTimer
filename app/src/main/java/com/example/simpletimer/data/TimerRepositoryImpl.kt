@@ -2,6 +2,11 @@ package com.example.simpletimer.data
 
 import com.example.simpletimer.extension.*
 
+/***
+ * map the results from or to database,
+ * this is to keep the real timer entity neat and fullfill the UI needs with TimerObject
+ */
+
 class TimerRepositoryImpl(
     private val dao: TimerDao
 ) : TimerRepository {

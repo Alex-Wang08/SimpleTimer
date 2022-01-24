@@ -26,6 +26,10 @@ import com.example.simpletimer.ui.theme.Blue
 import com.example.simpletimer.util.UiEvent
 import kotlinx.coroutines.flow.collect
 
+/***
+ * the new timer screen including UI widgets, event trigger and receiver
+ */
+
 @Composable
 fun NewTimerScreen(
     onPopBackStack: () -> Unit,
@@ -93,7 +97,7 @@ fun NewTimerScreen(
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent,
-                    focusedIndicatorColor =  Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
                 ),
@@ -105,7 +109,10 @@ fun NewTimerScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             TextField(
-                value = TextFieldValue(text = viewModel.timeString, selection = TextRange(length, length)), // keep cursor at the end
+                value = TextFieldValue(
+                    text = viewModel.timeString,
+                    selection = TextRange(length, length)
+                ), // keep cursor at the end
                 onValueChange = {
                     viewModel.onEvent(NewTimerEvent.OnTimeChange(it.text))
                 },
@@ -122,7 +129,7 @@ fun NewTimerScreen(
 
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent,
-                    focusedIndicatorColor =  Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
                     cursorColor = Color.Transparent

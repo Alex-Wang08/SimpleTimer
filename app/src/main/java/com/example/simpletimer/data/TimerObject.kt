@@ -1,6 +1,10 @@
 package com.example.simpletimer.data
 
-data class TimerObject (
+/***
+ * this data object is used to map the time entity
+ */
+
+data class TimerObject(
     val id: Int? = null,
     var label: String,
     var originalTime: String,

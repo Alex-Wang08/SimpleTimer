@@ -12,6 +12,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/***
+ * place to find how all the classes are created for injection
+ *
+ */
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {

@@ -22,6 +22,10 @@ import com.example.simpletimer.ui.theme.SimpleTimerTheme
 import com.example.simpletimer.util.Routes
 import dagger.hilt.android.AndroidEntryPoint
 
+/****
+ * navigation is applied that the two screens are place in MainActivity and controlled by NaVController
+ */
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     //region Constants

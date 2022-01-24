@@ -11,11 +11,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.simpletimer.R
 import com.example.simpletimer.ui.show_timer.timer_item.TimerItem
 import com.example.simpletimer.util.UiEvent
 import kotlinx.coroutines.flow.collect
+
+/***
+ * the show timer screen including UI widgets, event trigger and receiver
+ */
 
 @Composable
 fun ShowTimerScreen(
@@ -43,7 +49,7 @@ fun ShowTimerScreen(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { Text("Timer") }
+                title = { Text(text = stringResource(R.string.placeholder_timer)) }
             )
         },
 
@@ -53,7 +59,7 @@ fun ShowTimerScreen(
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add"
+                    contentDescription = null
                 )
             }
         }
@@ -61,7 +67,7 @@ fun ShowTimerScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(timerList) { index, timerObject  ->
+            itemsIndexed(timerList) { index, timerObject ->
                 TimerItem(
                     index = index,
                     timerObject = timerObject,

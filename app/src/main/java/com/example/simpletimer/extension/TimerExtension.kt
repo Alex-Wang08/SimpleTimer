@@ -4,6 +4,11 @@ import com.example.simpletimer.data.Timer
 import com.example.simpletimer.data.TimerObject
 import kotlin.math.ceil
 
+/***
+ * this file contains all the trivial methods needs to calculate the timer value
+ * Also contains the mapper between Timer and TimerObject
+ */
+
 object TimerConstants {
     const val MAX_VALUE = 999999L
     const val STRING_FORMAT = "%02d:%02d:%02d"

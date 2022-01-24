@@ -20,6 +20,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/***
+ * holder data and implement its logic that is needed on the show timer screen
+ */
+
 @HiltViewModel
 class ShowTimerViewModel @Inject constructor(
     private val repository: TimerRepository,
@@ -28,7 +32,7 @@ class ShowTimerViewModel @Inject constructor(
 
     //region Variables
     val timersLiveData = mutableStateListOf<TimerObject>()
-    lateinit var timers: List<TimerObject>
+    private lateinit var timers: List<TimerObject>
     private var countDownTimer: CountDownTimer? = null
     private var isLoading: Boolean = false
     private val _uiEvent = Channel<UiEvent>()
@@ -57,10 +61,13 @@ class ShowTimerViewModel @Inject constructor(
 
     // Timer load
     fun loadTimerList() {
+        // only load data on first open and new timer is added
         if (!isFirstLoad && !mainViewModel.hasDatasetChanged) return
 
         viewModelScope.launch(Dispatchers.IO) {
             isLoading = true
+
+            // save the data in memory and make it being bind to the UI so access to database can be very limited
             timers = withContext(Dispatchers.Default) { repository.getTimerList() }
             timers.forEach { it.isRunning = !isFirstLoad }
 
@@ -84,6 +91,7 @@ class ShowTimerViewModel @Inject constructor(
     }
 
     private fun autoStartCountDown(timerObject: TimerObject, index: Int) {
+        // auto start timer after it is create or manually triggered
         if (!timerObject.isRunning || timerObject.hasAutoStarted) return
 
         startCountDown(timerObject, index)
@@ -92,6 +100,8 @@ class ShowTimerViewModel @Inject constructor(
 
     private fun changeTimerState(timerObject: TimerObject, index: Int) {
         val isRunning = !timerObject.isRunning
+
+        // update the list item so the UI will be updated
         timersLiveData[index] = timersLiveData[index].copy(isRunning = isRunning)
 
         if (isRunning) {
@@ -113,6 +123,7 @@ class ShowTimerViewModel @Inject constructor(
             }
 
             override fun onFinish() {
+                // when timer is up, send notification and reset the timer
                 sendUiEvent(UiEvent.SendNotification(timerObject.label))
                 resetTimer(index)
             }
@@ -123,13 +134,7 @@ class ShowTimerViewModel @Inject constructor(
     private fun resetTimer(index: Int) {
         val originalTime = timersLiveData[index].originalTime
         val newTimer = timersLiveData[index].copy(currentTime = originalTime, isRunning = false)
-        viewModelScope.launch {
-            val res = async {
-                repository.insertTimer(newTimer)
-            }
-            res.await()
-            timersLiveData[index] = newTimer
-        }
+        timersLiveData[index] = newTimer
     }
 
     private fun updateCurrentTime(milliSecs: Long, index: Int) {

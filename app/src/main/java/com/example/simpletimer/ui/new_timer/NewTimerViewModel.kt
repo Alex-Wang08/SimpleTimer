@@ -16,6 +16,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
+/***
+ * holder data and implement its logic that is needed on the new timer screen
+ */
+
 @HiltViewModel
 class NewTimerViewModel @Inject constructor(
     private val repository: TimerRepository,
@@ -57,6 +61,7 @@ class NewTimerViewModel @Inject constructor(
 
     // region Private Helpers
     private fun saveTimer() {
+        // no value is assigned, do not save
         if (timeString == TimerConstants.DEFAULT_TIME_STRING) {
             sendUiEvent(UiEvent.ShowToastMessage)
             return
@@ -80,6 +85,8 @@ class NewTimerViewModel @Inject constructor(
                 )
             }
             res.await()
+
+            // after save, go back and tell previous page to refresh
             mainViewModel.hasDatasetChanged = true
             sendUiEvent(UiEvent.PopBackStack)
         }
@@ -94,7 +101,7 @@ class NewTimerViewModel @Inject constructor(
     private fun updateTimerValue(value: String?) {
         if (value == null) return
 
-        // timer string in format of 12:23:56
+        // timer string in format of "12:23:56"
         val timeLong = value.fromTimerStringToTimerLong()
         if (timeLong > TimerConstants.MAX_VALUE) return
         timeString = timeLong.fromTimerLongToTimerString()
