@@ -46,7 +46,7 @@ fun TimerItem(
                     Image(
                         painter = painterResource(id = R.drawable.ic_close),
                         contentDescription = null,
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.size(35.dp).clickable {
                             onEvent(TimerListEvent.OnDeleteTimerClick(timerObject, index))
                         }
                     )

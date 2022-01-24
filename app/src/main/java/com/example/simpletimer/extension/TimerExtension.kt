@@ -81,7 +81,7 @@ fun Timer.toTimerObject(): TimerObject {
         label = this.label,
         originalTime = this.originalTime,
         currentTime = this.originalTime,
-        isRunning = true,
+        isRunning = false,
         hasAutoStarted = false
     )
 }
