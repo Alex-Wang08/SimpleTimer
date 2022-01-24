@@ -33,12 +33,7 @@ class TimerListViewModel @Inject constructor(
     private var isRefreshing: Boolean = false
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
-    //endregion
-
-    //region Init
-    init {
-        loadTimerList(true)
-    }
+    var isFirstLoad: Boolean = true
     //endregion
 
     //region Event
@@ -64,26 +59,26 @@ class TimerListViewModel @Inject constructor(
     //endregion
 
     // region Private Helpers
-    private fun loadTimerList(isFirstLoad: Boolean = false) {
+    fun loadTimerList(isRefresh: Boolean = false) {
+        if (!isRefresh && !isFirstLoad) return
+
         viewModelScope.launch(Dispatchers.IO) {
             isRefreshing = true
             timers = withContext(Dispatchers.Default) { repository.getTimerList() }
-
-            if (isFirstLoad) {
-                timers.forEach { it.isRunning = false }
-            }
+            timers.forEach { it.isRunning = isRefresh }
 
             mainViewModel.hasDatasetChanged = false
             timersLiveData.clear()
             timersLiveData.addAll(timers)
 
             isRefreshing = false
+            isFirstLoad = false
         }
     }
 
     private fun refreshTimerList() {
         if (!mainViewModel.hasDatasetChanged || isRefreshing) return
-        loadTimerList(false)
+        loadTimerList(true)
     }
 
     private fun createNewTimer() {
