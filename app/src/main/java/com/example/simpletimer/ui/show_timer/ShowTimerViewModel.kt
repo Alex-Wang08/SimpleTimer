@@ -55,7 +55,7 @@ class ShowTimerViewModel @Inject constructor(
     }
     //endregion
 
-    // region Private Helpers
+    // Timer load
     fun loadTimerList() {
         if (!isFirstLoad && !mainViewModel.hasDatasetChanged) return
 
@@ -72,7 +72,9 @@ class ShowTimerViewModel @Inject constructor(
             isFirstLoad = false
         }
     }
+    //endregion
 
+    // region Private Helpers
     private fun createNewTimer() {
         if (timersLiveData.size > 0) {
             sendUiEvent(UiEvent.ShowToastMessage)
